@@ -10,7 +10,7 @@ const mf=new Miniflare(convertV4MiniflareOptions({workers:[{name:"drakor-indo",m
 
 try {
  for(const source of ['dramaid','dramaqu']){
- const r=await mf.dispatchFetch('http://local/api/catalog?source='+source);const data=await r.json();if(!r.ok||!data.items?.length)throw Error(JSON.stringify(data));console.log(source,'catalog',data.items.length,data.items[0].title);
+ const r=await mf.dispatchFetch('http://local/api/catalog?source='+source);const data=await r.json();if(!r.ok||!data.items?.length)throw Error(JSON.stringify(data));if(!Number.isInteger(data.items[0].episodeCount)||data.items[0].episodeCount<1)throw Error('Missing episode count for '+source);console.log(source,'catalog',data.items.length,data.items[0].title,data.items[0].episodeCount+' episodes');
  const d=await (await mf.dispatchFetch('http://local/api/detail?url='+encodeURIComponent(data.items[0].url))).json();if(!d.episodes?.length)throw Error('No episodes '+JSON.stringify(d));console.log(source,'episodes',d.episodes.length);
  const w=await (await mf.dispatchFetch('http://local/api/watch?url='+encodeURIComponent(d.episodes[0].url))).json();if(!w.video&&!w.embed)throw Error('No player '+JSON.stringify(w));console.log(source,'player',w.video||w.embed);
  }
