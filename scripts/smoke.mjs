@@ -28,6 +28,11 @@ try {
  if(source==='dramaqu'&&genre==='Medis'){if(data.items.length)throw Error('Unsupported medical category must be empty')}else if(!data.items.length)throw Error('Expected titles for '+source+' '+genre);
  console.log('Filter',source,genre,data.items.length);
  }
+ const featuredResponse=await mf.dispatchFetch('http://local/api/featured');const featuredData=await featuredResponse.json();
+ if(!featuredResponse.ok||featuredData.items?.length!==10)throw Error('Expected ten popular dramas: '+JSON.stringify(featuredData));
+ const names=featuredData.items.map(item=>item.title.normalize('NFKD').replace(/\p{M}/gu,'').toLowerCase().replace(/\b(?:19|20)\d{2}\b/g,'').replace(/[^\p{L}\p{N}]/gu,''));
+ if(new Set(names).size!==names.length||featuredData.items.some(item=>!item.image||!item.url||!item.id))throw Error('Invalid or duplicated featured drama');
+ console.log('Featured:',featuredData.items.map(item=>item.source+': '+item.title).join(' | '));
  const denied=await mf.dispatchFetch('http://local/api/detail?url=https://example.com/');if(denied.status!==400)throw Error('URL validation failed');
  console.log('Invalid source rejected',denied.status);
 } finally {await mf.dispose()}

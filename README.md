@@ -35,3 +35,9 @@ Deployment awal dilakukan melalui API Cloudflare. Belum ada deployment otomatis 
 Katalog menampilkan judul dari halaman katalog sumber, bukan seluruh arsip. Pilihan genre dan negara berlaku bergantian. Filter film dan Medis saat ini menggunakan DramaID. Nama tombol genre adalah daftar tetap; hasilnya diambil dari halaman genre sumber. Romansa DramaQu dipetakan ke kategori romantis. Favorit disimpan pada perangkat dan tampilan favorit mengikuti katalog yang dimuat. Perubahan struktur HTML sumber atau kebijakan hotlink/embed bisa memerlukan pembaruan adapter.
 
 Verifikasi awal: build dry-run dan smoke test dua sumber berhasil. Pemeriksaan visual browser dan playback menyeluruh belum terverifikasi karena relay preview gagal dan domain produksi belum diizinkan pada jaringan lingkungan pengujian.
+
+## Drama unggulan
+
+`GET /api/featured` membaca pilihan populer DramaID dan sidebar populer DramaQu pada detail judul pertama katalog. Daftar digabung bergantian, judul duplikat disatukan (DramaID diutamakan), dan dibatasi 10. Ini bukan peringkat gabungan berdasarkan skor penonton. Hasil boleh kurang dari 10 jika sumber tidak tersedia. Browser mengacak urutan sekali setiap refresh; filter katalog tidak memengaruhinya.
+
+Slider mendukung swipe, tombol navigasi, indikator, dan autoplay 6 detik dengan tombol jeda. Autoplay berhenti sementara ketika hover, fokus, sentuhan, dialog detail terbuka, atau tab tidak aktif, serta nonaktif untuk prefers-reduced-motion. Jalankan `node scripts/featured-test.mjs` untuk uji penggabungan, kegagalan sumber, navigasi, dan timer. Pemeriksaan visual browser tetap terbatas jika relay preview tidak tersedia.
