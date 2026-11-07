@@ -14,6 +14,14 @@ try {
  const d=await (await mf.dispatchFetch('http://local/api/detail?url='+encodeURIComponent(data.items[0].url))).json();if(!d.episodes?.length)throw Error('No episodes '+JSON.stringify(d));console.log(source,'episodes',d.episodes.length);
  const w=await (await mf.dispatchFetch('http://local/api/watch?url='+encodeURIComponent(d.episodes[0].url))).json();if(!w.video&&!w.embed)throw Error('No player '+JSON.stringify(w));console.log(source,'player',w.video||w.embed);
  }
+ const awake=await (await mf.dispatchFetch('http://local/api/detail?url=https%3A%2F%2Fdramaid.nimegami.id%2Fdrama%2Fthe-awake-2026')).json();
+ if(awake.episodes?.length!==22||awake.episodes.some((e,i)=>e.number!==i+1))throw Error('The Awake must be ordered 1 through 22: '+JSON.stringify(awake));
+ if(!awake.episodes[21].url.endsWith('episode-22-end'))throw Error('Final episode URL must retain END');
+ const finalPlayer=await (await mf.dispatchFetch('http://local/api/watch?url='+encodeURIComponent(awake.episodes[21].url))).json();
+ if(!finalPlayer.video&&!finalPlayer.embed)throw Error('Final episode missing player');
+ const html=await readFile('index.html','utf8');
+ if(/source-link|Buka episode di sumber|Buka halaman sumber|Referensi|buka halaman sumber/i.test(html))throw Error('Source links remain visible');
+ console.log('The Awake: episodes 1–22 ordered, final player available; source links removed');
  const denied=await mf.dispatchFetch('http://local/api/detail?url=https://example.com/');if(denied.status!==400)throw Error('URL validation failed');
  console.log('Invalid source rejected',denied.status);
 } finally {await mf.dispose()}

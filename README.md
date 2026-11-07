@@ -8,7 +8,7 @@ Produksi: https://drakor-indo.m3dzero.workers.dev/
 
 - Katalog dari DramaID dan DramaQu, pilihan sumber, pencarian judul, kategori, genre, dan urutan A–Z.
 - Sinopsis, daftar episode, favorit pada browser, dan tata letak responsif.
-- Pemutar video langsung DramaID atau embed DramaQu; tautan halaman sumber sebagai alternatif.
+- Pemutar video langsung DramaID atau embed DramaQu. Tautan referensi dan tombol menuju halaman sumber tidak ditampilkan.
 - API hanya membaca halaman dari dua sumber yang diizinkan. Tidak mengunggah atau menyimpan video.
 
 ## Pengembangan
