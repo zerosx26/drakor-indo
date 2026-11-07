@@ -32,6 +32,6 @@ Deployment awal dilakukan melalui API Cloudflare. Belum ada deployment otomatis 
 
 ## Batasan
 
-Katalog menampilkan judul dari halaman katalog sumber, bukan seluruh arsip. Pilihan genre dan negara berlaku bergantian. Filter film saat ini menggunakan DramaID. Favorit disimpan pada perangkat dan tampilan favorit mengikuti katalog yang dimuat. Perubahan struktur HTML sumber atau kebijakan hotlink/embed bisa memerlukan pembaruan adapter.
+Katalog menampilkan judul dari halaman katalog sumber, bukan seluruh arsip. Pilihan genre dan negara berlaku bergantian. Filter film dan Medis saat ini menggunakan DramaID. Nama tombol genre adalah daftar tetap; hasilnya diambil dari halaman genre sumber. Romansa DramaQu dipetakan ke kategori romantis. Favorit disimpan pada perangkat dan tampilan favorit mengikuti katalog yang dimuat. Perubahan struktur HTML sumber atau kebijakan hotlink/embed bisa memerlukan pembaruan adapter.
 
 Verifikasi awal: build dry-run dan smoke test dua sumber berhasil. Pemeriksaan visual browser dan playback menyeluruh belum terverifikasi karena relay preview gagal dan domain produksi belum diizinkan pada jaringan lingkungan pengujian.

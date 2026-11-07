@@ -22,6 +22,12 @@ try {
  const html=await readFile('index.html','utf8');
  if(/source-link|Buka episode di sumber|Buka halaman sumber|Referensi|buka halaman sumber/i.test(html))throw Error('Source links remain visible');
  console.log('The Awake: episodes 1–22 ordered, final player available; source links removed');
+ for(const source of ['dramaid','dramaqu'])for(const genre of ['Semua','Romansa','Drama','Komedi','Misteri','Medis']){
+ const response=await mf.dispatchFetch('http://local/api/catalog?source='+source+'&genre='+encodeURIComponent(genre));const data=await response.json();
+ if(!response.ok||!Array.isArray(data.items))throw Error('Filter failed: '+source+' '+genre+' '+JSON.stringify(data));
+ if(source==='dramaqu'&&genre==='Medis'){if(data.items.length)throw Error('Unsupported medical category must be empty')}else if(!data.items.length)throw Error('Expected titles for '+source+' '+genre);
+ console.log('Filter',source,genre,data.items.length);
+ }
  const denied=await mf.dispatchFetch('http://local/api/detail?url=https://example.com/');if(denied.status!==400)throw Error('URL validation failed');
  console.log('Invalid source rejected',denied.status);
 } finally {await mf.dispose()}
