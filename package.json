@@ -1,0 +1,28 @@
+{
+  "name": "drakor-indo",
+  "version": "1.0.0",
+  "description": "Portal katalog drama Korea untuk penonton Indonesia.",
+  "main": "app.js",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "check": "node --check app.js && wrangler deploy --dry-run",
+    "smoke": "node scripts/smoke.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zerosx26/drakor-indo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/zerosx26/drakor-indo/issues"
+  },
+  "homepage": "https://github.com/zerosx26/drakor-indo#readme",
+  "devDependencies": {
+    "wrangler": "^4.158.0",
+    "miniflare": "5.20261104.0-beta"
+  },
+  "private": true
+}
