@@ -43,3 +43,7 @@ Verifikasi awal: build dry-run dan smoke test dua sumber berhasil. Pemeriksaan v
 `GET /api/featured` membaca pilihan populer DramaID dan sidebar populer DramaQu pada detail judul pertama katalog. Daftar digabung bergantian, judul duplikat disatukan (DramaID diutamakan), dan dibatasi 10. Ini bukan peringkat gabungan berdasarkan skor penonton. Hasil boleh kurang dari 10 jika sumber tidak tersedia. Browser mengacak urutan sekali setiap refresh; filter katalog tidak memengaruhinya.
 
 Slider mendukung swipe, tombol navigasi, indikator, dan autoplay 6 detik dengan tombol jeda. Autoplay berhenti sementara ketika hover mouse, fokus keyboard, sentuhan yang masih berlangsung, dialog detail terbuka, atau tab tidak aktif; ketukan mobile dan swipe memulai ulang timer 6 detik, serta nonaktif untuk prefers-reduced-motion. Jalankan `node scripts/featured-test.mjs` untuk uji penggabungan, kegagalan sumber, navigasi, dan timer. Pemeriksaan visual browser tetap terbatas jika relay preview tidak tersedia.
+
+## Metadata detail
+
+Genre dan negara hanya dibaca dari tag genre/breadcrumb detail DramaID serta chip genre/info negara pada detail DramaQu. Menu, footer, dan rekomendasi tidak digunakan sebagai metadata. Nama diterjemahkan untuk nilai umum, duplikat dibuang, dan metadata yang tidak tersedia ditampilkan sebagai “—”. Uji fixture: `node scripts/metadata-test.mjs`.

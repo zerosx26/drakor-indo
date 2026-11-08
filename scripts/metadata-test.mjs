@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {Miniflare,convertV4MiniflareOptions} from 'miniflare';
+const idHTML=`<nav><a href="/genre/comedy">☺Butuh senyum</a><a href="/country/china">CNDrama China</a></nav><nav class="breadcrumbs"><a href="/country/japan">Jepang</a></nav><div class="genre-tags"><a href="/genre/drama">Drama</a><a href="/genre/romance">Romance</a><a href="/genre/romance">Romance</a></div><section class="related-section"><a href="/country/china">Jelajahi lagi</a><a href="/genre/mystery">Misteri</a></section>`;
+const quHTML=`<nav><a href="https://dramaqu.pro/genre/komedi/">Komedi</a></nav><dl class="dqu-info"><dt>Negara</dt><dd><a href="/negara/china/">China</a></dd></dl><div class="dqu-chips-kcl"><a href="/genre/drama/">Drama</a><a href="/genre/romantis/">Romantis</a><a href="/genre/romantis/">Romantis</a></div><footer><a href="/negara/japan/">Japan</a><a href="/genre/misteri/">Misteri</a></footer>`;
+const mf=new Miniflare(convertV4MiniflareOptions({workers:[{name:'metadata-test',modules:[{type:'ESModule',path:'worker.js',contents:await readFile('worker.js','utf8')},{type:'Text',path:'index.html',contents:'test'}],compatibilityDate:'2026-11-07',outboundService:async request=>{const u=new URL(request.url);return new Response(u.pathname.includes('missing')?'<nav><a href="/genre/comedy">☺Butuh senyum</a></nav>':u.hostname==='dramaqu.pro'?quHTML:idHTML,{headers:{'Content-Type':'text/html'}})}}]}));
+try{
+ for(const [url,countries] of [['https://dramaid.nimegami.id/drama/squall-2026',['Jepang']],['https://dramaqu.pro/sunshine-through-the-rain/',['China']]]){
+ const response=await mf.dispatchFetch('http://test/api/detail?url='+encodeURIComponent(url));assert.equal(response.status,200);const data=await response.json();assert.deepEqual(data.genres,['Drama','Romansa']);assert.deepEqual(data.countries,countries);
+ }
+ const empty=await (await mf.dispatchFetch('http://test/api/detail?url=https%3A%2F%2Fdramaid.nimegami.id%2Fdrama%2Fmissing')).json();assert.deepEqual(empty.genres,[]);assert.deepEqual(empty.countries,[]);
+ console.log('PASS: scoped metadata for both sources; menu/footer/recommendations excluded; translation, deduplication and missing metadata');
+}finally{await mf.dispose()}

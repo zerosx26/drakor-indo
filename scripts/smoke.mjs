@@ -33,6 +33,11 @@ try {
  const names=featuredData.items.map(item=>item.title.normalize('NFKD').replace(/\p{M}/gu,'').toLowerCase().replace(/\b(?:19|20)\d{2}\b/g,'').replace(/[^\p{L}\p{N}]/gu,''));
  if(new Set(names).size!==names.length||featuredData.items.some(item=>!item.image||!item.url||!item.id))throw Error('Invalid or duplicated featured drama');
  console.log('Featured:',featuredData.items.map(item=>item.source+': '+item.title).join(' | '));
+ for(const [url,genres,countries] of [['https://dramaid.nimegami.id/drama/squall-2026',['Drama','Romansa'],['Jepang']],['https://dramaqu.pro/sunshine-through-the-rain/',['Drama'],['China']]]){
+ const d=await (await mf.dispatchFetch('http://local/api/detail?url='+encodeURIComponent(url))).json();
+ if(JSON.stringify(d.genres)!==JSON.stringify(genres)||JSON.stringify(d.countries)!==JSON.stringify(countries))throw Error('Unexpected metadata '+JSON.stringify({url,genres:d.genres,countries:d.countries}));
+ console.log('Metadata',d.title,d.genres.join(', '),d.countries.join(', '));
+ }
  const denied=await mf.dispatchFetch('http://local/api/detail?url=https://example.com/');if(denied.status!==400)throw Error('URL validation failed');
  console.log('Invalid source rejected',denied.status);
 } finally {await mf.dispose()}
