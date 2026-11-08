@@ -34,7 +34,7 @@ Deployment awal dilakukan melalui API Cloudflare. Belum ada deployment otomatis 
 
 ## Batasan
 
-Katalog memakai snapshot seluruh halaman katalog publik yang berhasil ditelusuri saat impor terakhir. Filter genre bekerja pada katalog kategori negara yang sedang dimuat. Filter film saat ini menggunakan DramaID. Tombol genre dibentuk otomatis dari metadata judul pada katalog yang dimuat. Pemilihan genre menyaring data di browser, bukan mengambil halaman genre lain. Favorit disimpan pada perangkat dan tampilan favorit mengikuti katalog yang dimuat. Perubahan struktur HTML sumber atau kebijakan hotlink/embed bisa memerlukan pembaruan adapter.
+Katalog memakai snapshot seluruh halaman katalog publik yang berhasil ditelusuri saat impor terakhir. Filter genre bekerja pada katalog kategori negara yang sedang dimuat. Filter film saat ini menggunakan DramaID. Tombol genre memakai daftar tetap dari seluruh genre pada snapshot 8 November 2026. Pemilihan genre menyaring data di browser, bukan mengambil halaman genre lain. Favorit disimpan pada perangkat dan tampilan favorit mengikuti katalog yang dimuat. Perubahan struktur HTML sumber atau kebijakan hotlink/embed bisa memerlukan pembaruan adapter.
 
 Verifikasi awal: build dry-run dan smoke test dua sumber berhasil. Pemeriksaan visual browser dan playback menyeluruh belum terverifikasi karena relay preview gagal dan domain produksi belum diizinkan pada jaringan lingkungan pengujian.
 
@@ -48,11 +48,11 @@ Slider mendukung swipe, tombol navigasi, indikator, dan autoplay 6 detik dengan 
 
 Genre dan negara hanya dibaca dari tag genre/breadcrumb detail DramaID serta chip genre/info negara pada detail DramaQu. Menu, footer, dan rekomendasi tidak digunakan sebagai metadata. Nama diterjemahkan untuk nilai umum, duplikat dibuang, dan metadata yang tidak tersedia ditampilkan sebagai “—”. Uji fixture: `node scripts/metadata-test.mjs`.
 
-## Filter genre dinamis
+## Filter genre tetap
 
 Frontend membaca seluruh halaman API snapshot untuk sumber/kategori yang dipilih. Setiap item memiliki `genres: string[]` yang dilengkapi saat impor. Adapter live lama tetap tersedia melalui `live=1` untuk diagnosis dan slider populer; mode metadata=full pada adapter live dibatasi 40 judul per respons.
 
-Tombol genre mengikuti gabungan metadata katalog sumber/kategori saat ini, diawali Semua dan diurutkan A–Z. Pergantian genre tidak mengambil katalog baru atau menghapus kategori negara. Jika genre terpilih tidak lagi tersedia setelah sumber/kategori berubah, pilihan kembali ke Semua. Pencarian juga mencakup nama genre. Tidak ada genre rekaan untuk judul yang metadata-nya kosong. Daftar ini mencakup katalog yang dimuat, bukan seluruh arsip situs sumber. Uji dengan `node scripts/genres-test.mjs`.
+Tombol genre memakai daftar tetap 62 genre ditambah Semua, diurutkan A–Z. Pergantian sumber, kategori, dan impor katalog tidak mengubah daftar tombol secara otomatis. Pergantian genre tidak mengambil katalog baru atau menghapus kategori negara. Pilihan tetap dipertahankan walaupun sumber/kategori tidak memiliki hasil; hasil kosong ditampilkan. Genre baru ditambahkan melalui pembaruan kode secara sengaja. Pencarian juga mencakup nama genre. Tidak ada genre rekaan untuk judul yang metadata-nya kosong. Daftar ini mencakup katalog yang dimuat, bukan seluruh arsip situs sumber. Uji dengan `node scripts/genres-test.mjs`.
 
 ## Impor seluruh katalog
 
