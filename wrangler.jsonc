@@ -4,6 +4,25 @@
   "main": "worker.js",
   "compatibility_date": "2026-11-07",
   "workers_dev": true,
-  "rules": [{"type": "Text", "globs": ["**/*.html"], "fallthrough": true}],
-  "observability": {"enabled": true, "traces": {"enabled": true}}
+  "rules": [
+    {
+      "type": "Text",
+      "globs": [
+        "**/*.html"
+      ],
+      "fallthrough": true
+    }
+  ],
+  "observability": {
+    "enabled": true,
+    "traces": {
+      "enabled": true
+    }
+  },
+  "routes": [
+    {
+      "pattern": "drakor.zerosarcade.com",
+      "custom_domain": true
+    }
+  ]
 }

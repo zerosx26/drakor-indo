@@ -2,7 +2,9 @@
 
 Portal katalog drama dengan tampilan dari preview GitHub Pages, dihosting pada Cloudflare Workers.
 
-Produksi: https://drakor-indo.m3dzero.workers.dev/
+Produksi: https://drakor.zerosarcade.com/
+
+Alamat Workers alternatif: https://drakor-indo.m3dzero.workers.dev/
 
 ## Fitur
 
