@@ -34,7 +34,7 @@ Deployment awal dilakukan melalui API Cloudflare. Belum ada deployment otomatis 
 
 ## Batasan
 
-Katalog menampilkan judul dari halaman katalog sumber, bukan seluruh arsip. Pilihan genre dan negara berlaku bergantian. Filter film dan Medis saat ini menggunakan DramaID. Nama tombol genre adalah daftar tetap; hasilnya diambil dari halaman genre sumber. Romansa DramaQu dipetakan ke kategori romantis. Favorit disimpan pada perangkat dan tampilan favorit mengikuti katalog yang dimuat. Perubahan struktur HTML sumber atau kebijakan hotlink/embed bisa memerlukan pembaruan adapter.
+Katalog menampilkan judul dari halaman katalog sumber, bukan seluruh arsip. Filter genre bekerja pada katalog kategori negara yang sedang dimuat. Filter film saat ini menggunakan DramaID. Tombol genre dibentuk otomatis dari metadata judul pada katalog yang dimuat. Pemilihan genre menyaring data di browser, bukan mengambil halaman genre lain. Favorit disimpan pada perangkat dan tampilan favorit mengikuti katalog yang dimuat. Perubahan struktur HTML sumber atau kebijakan hotlink/embed bisa memerlukan pembaruan adapter.
 
 Verifikasi awal: build dry-run dan smoke test dua sumber berhasil. Pemeriksaan visual browser dan playback menyeluruh belum terverifikasi karena relay preview gagal dan domain produksi belum diizinkan pada jaringan lingkungan pengujian.
 
@@ -47,3 +47,9 @@ Slider mendukung swipe, tombol navigasi, indikator, dan autoplay 6 detik dengan 
 ## Metadata detail
 
 Genre dan negara hanya dibaca dari tag genre/breadcrumb detail DramaID serta chip genre/info negara pada detail DramaQu. Menu, footer, dan rekomendasi tidak digunakan sebagai metadata. Nama diterjemahkan untuk nilai umum, duplikat dibuang, dan metadata yang tidak tersedia ditampilkan sebagai “—”. Uji fixture: `node scripts/metadata-test.mjs`.
+
+## Filter genre dinamis
+
+Frontend memakai `GET /api/catalog?source=...&category=...&metadata=full`. Setiap item memiliki `genres: string[]` dengan label yang dinormalisasi. Metadata dasar diperoleh dari data terstruktur atau kartu katalog; mode full melengkapinya dari detail drama dengan maksimal empat pengambilan paralel, maksimum 40 judul per sumber per respons untuk membatasi subrequest Worker. Jika metadata detail gagal, metadata kartu yang tersedia tetap digunakan. Mode katalog ringan tetap tersedia tanpa metadata=full, termasuk untuk slider populer.
+
+Tombol genre mengikuti gabungan metadata katalog sumber/kategori saat ini, diawali Semua dan diurutkan A–Z. Pergantian genre tidak mengambil katalog baru atau menghapus kategori negara. Jika genre terpilih tidak lagi tersedia setelah sumber/kategori berubah, pilihan kembali ke Semua. Pencarian juga mencakup nama genre. Tidak ada genre rekaan untuk judul yang metadata-nya kosong. Daftar ini mencakup katalog yang dimuat, bukan seluruh arsip situs sumber. Uji dengan `node scripts/genres-test.mjs`.

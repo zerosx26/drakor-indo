@@ -38,6 +38,10 @@ try {
  if(JSON.stringify(d.genres)!==JSON.stringify(genres)||JSON.stringify(d.countries)!==JSON.stringify(countries))throw Error('Unexpected metadata '+JSON.stringify({url,genres:d.genres,countries:d.countries}));
  console.log('Metadata',d.title,d.genres.join(', '),d.countries.join(', '));
  }
+ for(const source of ['dramaid','dramaqu']){
+ const r=await mf.dispatchFetch('http://local/api/catalog?source='+source+'&metadata=full');const data=await r.json();if(!r.ok||!data.items.length||data.items.some(item=>!Array.isArray(item.genres)))throw Error('Full genre catalog failed '+JSON.stringify(data));
+ console.log('Dynamic genres',source,[...new Set(data.items.flatMap(item=>item.genres))].join(', '));
+ }
  const denied=await mf.dispatchFetch('http://local/api/detail?url=https://example.com/');if(denied.status!==400)throw Error('URL validation failed');
  console.log('Invalid source rejected',denied.status);
 } finally {await mf.dispose()}
