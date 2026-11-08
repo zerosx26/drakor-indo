@@ -30,5 +30,20 @@
       "binding": "CATALOG",
       "id": "f8d1610a483f44fcaea49660688d5b4c"
     }
+  ],
+  "triggers": {
+    "crons": [
+      "0 20 * * *"
+    ]
+  },
+  "workflows": [
+    {
+      "name": "drakor-catalog-daily-sync",
+      "binding": "CATALOG_SYNC",
+      "class_name": "DailyCatalogSync",
+      "concurrency": {
+        "limit": 1
+      }
+    }
   ]
 }
