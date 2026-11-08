@@ -34,7 +34,7 @@ Deployment awal dilakukan melalui API Cloudflare. Belum ada deployment otomatis 
 
 ## Batasan
 
-Katalog menampilkan judul dari halaman katalog sumber, bukan seluruh arsip. Filter genre bekerja pada katalog kategori negara yang sedang dimuat. Filter film saat ini menggunakan DramaID. Tombol genre dibentuk otomatis dari metadata judul pada katalog yang dimuat. Pemilihan genre menyaring data di browser, bukan mengambil halaman genre lain. Favorit disimpan pada perangkat dan tampilan favorit mengikuti katalog yang dimuat. Perubahan struktur HTML sumber atau kebijakan hotlink/embed bisa memerlukan pembaruan adapter.
+Katalog memakai snapshot seluruh halaman katalog publik yang berhasil ditelusuri saat impor terakhir. Filter genre bekerja pada katalog kategori negara yang sedang dimuat. Filter film saat ini menggunakan DramaID. Tombol genre dibentuk otomatis dari metadata judul pada katalog yang dimuat. Pemilihan genre menyaring data di browser, bukan mengambil halaman genre lain. Favorit disimpan pada perangkat dan tampilan favorit mengikuti katalog yang dimuat. Perubahan struktur HTML sumber atau kebijakan hotlink/embed bisa memerlukan pembaruan adapter.
 
 Verifikasi awal: build dry-run dan smoke test dua sumber berhasil. Pemeriksaan visual browser dan playback menyeluruh belum terverifikasi karena relay preview gagal dan domain produksi belum diizinkan pada jaringan lingkungan pengujian.
 
@@ -50,6 +50,16 @@ Genre dan negara hanya dibaca dari tag genre/breadcrumb detail DramaID serta chi
 
 ## Filter genre dinamis
 
-Frontend memakai `GET /api/catalog?source=...&category=...&metadata=full`. Setiap item memiliki `genres: string[]` dengan label yang dinormalisasi. Metadata dasar diperoleh dari data terstruktur atau kartu katalog; mode full melengkapinya dari detail drama dengan maksimal empat pengambilan paralel, maksimum 40 judul per sumber per respons untuk membatasi subrequest Worker. Jika metadata detail gagal, metadata kartu yang tersedia tetap digunakan. Mode katalog ringan tetap tersedia tanpa metadata=full, termasuk untuk slider populer.
+Frontend membaca seluruh halaman API snapshot untuk sumber/kategori yang dipilih. Setiap item memiliki `genres: string[]` yang dilengkapi saat impor. Adapter live lama tetap tersedia melalui `live=1` untuk diagnosis dan slider populer; mode metadata=full pada adapter live dibatasi 40 judul per respons.
 
 Tombol genre mengikuti gabungan metadata katalog sumber/kategori saat ini, diawali Semua dan diurutkan A–Z. Pergantian genre tidak mengambil katalog baru atau menghapus kategori negara. Jika genre terpilih tidak lagi tersedia setelah sumber/kategori berubah, pilihan kembali ke Semua. Pencarian juga mencakup nama genre. Tidak ada genre rekaan untuk judul yang metadata-nya kosong. Daftar ini mencakup katalog yang dimuat, bukan seluruh arsip situs sumber. Uji dengan `node scripts/genres-test.mjs`.
+
+## Impor seluruh katalog
+
+Binding Workers KV `CATALOG` menyimpan snapshot katalog lengkap dari seluruh pagination kedua sumber, dibagi menjadi potongan 200 entri dengan manifest versi. Endpoint katalog default membaca snapshot ini; `live=1` tetap tersedia untuk diagnosis adapter sumber. Frontend memuat metadata indeks sumber/kategori yang dipilih, menampilkan 48 kartu per tahap, serta mencari dan menyaring seluruh indeks yang dimuat. Judul yang sama pada penyedia berbeda tetap menjadi entri masing-masing agar pilihan sumber dan favorit lama tetap berfungsi.
+
+Jalankan `python scripts/import_catalog.py` untuk menelusuri pagination dan melengkapi metadata. Cache pengambilan berada di `../import-cache` (berlaku satu jam). Skrip menghentikan impor jika ada halaman katalog gagal; kegagalan detail tercatat dan memakai metadata kartu yang tersedia. Hasil `catalog.json` adalah data sementara yang diabaikan Git. Jalankan `node scripts/prepare_catalog.mjs` untuk memvalidasi data, membuat `catalog-manifest.json`, dan menyiapkan bulk KV di `../import-batches`.
+
+Unggah seluruh batch chunk ke namespace KV yang dinyatakan pada konfigurasi, verifikasi jumlahnya, lalu tulis manifest terakhir agar penggantian snapshot tidak menampilkan data setengah jadi. Setelah itu terbitkan Worker dengan binding `CATALOG`. Pembaruan snapshot dilakukan dengan impor ulang; belum ada sinkronisasi terjadwal. Uji arsip dan tampilan bertahap: `node scripts/catalog-test.mjs`. Preview dan smoke test mengisi KV lokal dari catalog.json; data produksi tidak dipakai untuk pengujian tulis.
+
+API snapshot katalog memakai `page` (mulai dari 1) dan mengembalikan `nextPage` atau null. Setiap respons membaca satu chunk KV, maksimum 500 entri, agar CPU dan payload per permintaan tetap terbatas. Frontend mengambil semua chunk sumber/kategori sebelum membentuk genre dan menyaring judul, sehingga pencarian mencakup keseluruhan snapshot; tampilan kartu tetap dibatasi 48 per tahap.

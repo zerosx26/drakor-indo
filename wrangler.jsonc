@@ -24,5 +24,11 @@
       "pattern": "drakor.zerosarcade.com",
       "custom_domain": true
     }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "CATALOG",
+      "id": "f8d1610a483f44fcaea49660688d5b4c"
+    }
   ]
 }

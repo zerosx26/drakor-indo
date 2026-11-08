@@ -1,0 +1,69 @@
+{
+  "version": "20261108042742",
+  "updatedAt": "2026-11-08T04:27:42Z",
+  "sources": {
+    "dramaid": {
+      "pages": 208,
+      "titles": 4945,
+      "chunks": [
+        "catalog:20261108042742:dramaid:0",
+        "catalog:20261108042742:dramaid:1",
+        "catalog:20261108042742:dramaid:2",
+        "catalog:20261108042742:dramaid:3",
+        "catalog:20261108042742:dramaid:4",
+        "catalog:20261108042742:dramaid:5",
+        "catalog:20261108042742:dramaid:6",
+        "catalog:20261108042742:dramaid:7",
+        "catalog:20261108042742:dramaid:8",
+        "catalog:20261108042742:dramaid:9",
+        "catalog:20261108042742:dramaid:10",
+        "catalog:20261108042742:dramaid:11",
+        "catalog:20261108042742:dramaid:12",
+        "catalog:20261108042742:dramaid:13",
+        "catalog:20261108042742:dramaid:14",
+        "catalog:20261108042742:dramaid:15",
+        "catalog:20261108042742:dramaid:16",
+        "catalog:20261108042742:dramaid:17",
+        "catalog:20261108042742:dramaid:18",
+        "catalog:20261108042742:dramaid:19",
+        "catalog:20261108042742:dramaid:20",
+        "catalog:20261108042742:dramaid:21",
+        "catalog:20261108042742:dramaid:22",
+        "catalog:20261108042742:dramaid:23",
+        "catalog:20261108042742:dramaid:24"
+      ]
+    },
+    "dramaqu": {
+      "pages": 165,
+      "titles": 4895,
+      "chunks": [
+        "catalog:20261108042742:dramaqu:0",
+        "catalog:20261108042742:dramaqu:1",
+        "catalog:20261108042742:dramaqu:2",
+        "catalog:20261108042742:dramaqu:3",
+        "catalog:20261108042742:dramaqu:4",
+        "catalog:20261108042742:dramaqu:5",
+        "catalog:20261108042742:dramaqu:6",
+        "catalog:20261108042742:dramaqu:7",
+        "catalog:20261108042742:dramaqu:8",
+        "catalog:20261108042742:dramaqu:9",
+        "catalog:20261108042742:dramaqu:10",
+        "catalog:20261108042742:dramaqu:11",
+        "catalog:20261108042742:dramaqu:12",
+        "catalog:20261108042742:dramaqu:13",
+        "catalog:20261108042742:dramaqu:14",
+        "catalog:20261108042742:dramaqu:15",
+        "catalog:20261108042742:dramaqu:16",
+        "catalog:20261108042742:dramaqu:17",
+        "catalog:20261108042742:dramaqu:18",
+        "catalog:20261108042742:dramaqu:19",
+        "catalog:20261108042742:dramaqu:20",
+        "catalog:20261108042742:dramaqu:21",
+        "catalog:20261108042742:dramaqu:22",
+        "catalog:20261108042742:dramaqu:23",
+        "catalog:20261108042742:dramaqu:24"
+      ]
+    }
+  },
+  "metadataFailures": 0
+}

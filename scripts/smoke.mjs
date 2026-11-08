@@ -6,7 +6,9 @@ import {promisify} from 'node:util';
 const exec=promisify(execFile),args=process.argv.slice(2);
 const option=(name,fallback)=>{const i=args.indexOf(name);return i>=0?args[i+1]:fallback};
 const port=Number(option('--port',process.env.PORT||'5173'));
-const mf=new Miniflare(convertV4MiniflareOptions({workers:[{name:"drakor-indo",modules:[{type:'ESModule',path:'worker.js',contents:await readFile('worker.js','utf8')},{type:'Text',path:'index.html',contents:await readFile('index.html','utf8')}],compatibilityDate:'2026-11-07',outboundService:async request=>{try{const {stdout}=await exec('curl',['-fsS','--max-time','20',request.url],{maxBuffer:3*1024*1024});return new Response(stdout,{headers:{'Content-Type':'text/html'}})}catch{return new Response('Source unavailable',{status:502})}}}]}));
+const mf=new Miniflare(convertV4MiniflareOptions({workers:[{name:"drakor-indo",modules:[{type:'ESModule',path:'worker.js',contents:await readFile('worker.js','utf8')},{type:'Text',path:'index.html',contents:await readFile('index.html','utf8')}],compatibilityDate:'2026-11-07',kvNamespaces:['CATALOG'],outboundService:async request=>{try{const {stdout}=await exec('curl',['-fsS','--max-time','20',request.url],{maxBuffer:3*1024*1024});return new Response(stdout,{headers:{'Content-Type':'text/html'}})}catch{return new Response('Source unavailable',{status:502})}}}]}));
+const archive=JSON.parse(await readFile('catalog.json','utf8')),catalogKV=await mf.getKVNamespace('CATALOG');const manifest={updatedAt:archive.updatedAt,sources:{}};for(const source of ['dramaid','dramaqu']){const rows=archive.items.filter(item=>item.source===source),chunks=[];for(let i=0;i<rows.length;i+=500){const key=source+':'+i;chunks.push(key);await catalogKV.put(key,JSON.stringify(rows.slice(i,i+500)))}manifest.sources[source]={...archive.sources[source],chunks}}await catalogKV.put('manifest',JSON.stringify(manifest));
+
 
 try {
  for(const source of ['dramaid','dramaqu']){
@@ -23,7 +25,7 @@ try {
  if(/source-link|Buka episode di sumber|Buka halaman sumber|Referensi|buka halaman sumber/i.test(html))throw Error('Source links remain visible');
  console.log('The Awake: episodes 1–22 ordered, final player available; source links removed');
  for(const source of ['dramaid','dramaqu'])for(const genre of ['Semua','Romansa','Drama','Komedi','Misteri','Medis']){
- const response=await mf.dispatchFetch('http://local/api/catalog?source='+source+'&genre='+encodeURIComponent(genre));const data=await response.json();
+ const response=await mf.dispatchFetch('http://local/api/catalog?live=1&source='+source+'&genre='+encodeURIComponent(genre));const data=await response.json();
  if(!response.ok||!Array.isArray(data.items))throw Error('Filter failed: '+source+' '+genre+' '+JSON.stringify(data));
  if(source==='dramaqu'&&genre==='Medis'){if(data.items.length)throw Error('Unsupported medical category must be empty')}else if(!data.items.length)throw Error('Expected titles for '+source+' '+genre);
  console.log('Filter',source,genre,data.items.length);
@@ -42,6 +44,7 @@ try {
  const r=await mf.dispatchFetch('http://local/api/catalog?source='+source+'&metadata=full');const data=await r.json();if(!r.ok||!data.items.length||data.items.some(item=>!Array.isArray(item.genres)))throw Error('Full genre catalog failed '+JSON.stringify(data));
  console.log('Dynamic genres',source,[...new Set(data.items.flatMap(item=>item.genres))].join(', '));
  }
+ for(const source of ['dramaid','dramaqu']){let page=1,rows=[];do{const response=await mf.dispatchFetch('http://local/api/catalog?source='+source+'&page='+page);if(!response.ok)throw Error('Archive page failed');const data=await response.json();rows.push(...data.items);page=data.nextPage}while(page);if(rows.length!==archive.sources[source].titles||new Set(rows.map(item=>item.id)).size!==rows.length)throw Error('Incomplete archive traversal');console.log('Full archive',source,rows.length,'entries; last:',rows.at(-1).title)}
  const denied=await mf.dispatchFetch('http://local/api/detail?url=https://example.com/');if(denied.status!==400)throw Error('URL validation failed');
  console.log('Invalid source rejected',denied.status);
 } finally {await mf.dispose()}
