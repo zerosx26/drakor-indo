@@ -3,7 +3,7 @@ export const WIB_CRON='0 20 * * *';
 export function wibDay(timestamp){return new Date(timestamp+7*60*60*1000).toISOString().slice(0,10)}
 export function recent(item,now=Date.now()){return Number.isFinite(item.lastContentUpdateAt)&&item.lastContentUpdateAt<=now&&now-item.lastContentUpdateAt<BADGE_LIFETIME}
 export function dedupeCandidates(items){const map=new Map;for(const item of items){const previous=map.get(item.id);if(!previous||(Number(item.episodeCount)||0)>(Number(previous.episodeCount)||0))map.set(item.id,{...item,requiresDetail:Boolean(previous?.requiresDetail||item.requiresDetail)});else if(item.requiresDetail)map.set(item.id,{...previous,requiresDetail:true})}return [...map.values()]}
-export function mergeExisting(rows,candidates,now){const matched=[],updated=[];let changed=false;const items=rows.map(old=>{const item=candidates.get(old.id);if(!item)return old;matched.push(old.id);if(Number.isInteger(item.episodeCount)&&item.episodeCount>(Number(old.episodeCount)||0)){changed=true;updated.push(old.id);return {...old,title:item.title||old.title,image:item.image||old.image,episodeCount:item.episodeCount,lastContentUpdateAt:now}}return old});return {items,matched,updated,changed}}
+export function mergeExisting(rows,candidates,now){const matched=[],updated=[];let changed=false;const items=rows.map(old=>{const item=candidates.get(old.id);if(!item)return old;matched.push(old.id);if(Number.isInteger(item.episodeCount)&&item.episodeCount>(Number(old.episodeCount)||0)){changed=true;updated.push(old.id);return {...old,title:item.title||old.title,image:item.image||old.image,episodeCount:item.episodeCount,contentUpdateType:'episodes',lastContentUpdateAt:now}}return old});return {items,matched,updated,changed}}
 const RETRY={retries:{limit:2,delay:'30 seconds',backoff:'exponential'},timeout:'30 seconds'};
 export async function runCatalogSync(env,step,options){
  const {now,runId,scanPage,enrich}=options,day=wibDay(now),version='sync-'+runId.replace(/[^a-zA-Z0-9_-]/g,'-');
@@ -27,7 +27,7 @@ export async function runCatalogSync(env,step,options){
   for(const item of incoming.values()){
    if(matched.has(item.id))continue;
    let details={};try{if(!item.detailResolved)details=await step.do('detail-'+item.id,RETRY,()=>enrich(item))}catch(error){report.detailsFailed++;report.errors.push({source,stage:'detail',id:item.id,message:String(error.message).slice(0,200)})}
-   const {requiresDetail,detailResolved,...record}=item;newItems.push({...record,...details,id:item.id,source,url:item.url,episodeCount:item.episodeCount,lastContentUpdateAt:now});
+   const {requiresDetail,detailResolved,...record}=item;newItems.push({...record,...details,id:item.id,source,url:item.url,episodeCount:item.episodeCount,contentUpdateType:'new',lastContentUpdateAt:now});
   }
   for(let offset=0;offset<newItems.length;offset+=200){const key=`catalog:${version}:${source}:new:${offset/200}`,rows=newItems.slice(offset,offset+200);await step.do('append-'+source+'-'+offset,async()=>{await env.CATALOG.put(key,JSON.stringify(rows));return true});sourceInfo.chunks.push(key);staged.push(key)}
   info.added=newItems.length;sourceInfo.titles+=info.added;sourceInfo.lastCheckedAt=new Date(now).toISOString();report.added+=info.added;report.episodesUpdated+=info.episodesUpdated;

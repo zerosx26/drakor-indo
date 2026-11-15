@@ -75,3 +75,11 @@ Workflow memakai langkah dengan retry, satu instance aktif, dan ID berdasarkan t
 Uji: `node scripts/sync-test.mjs` untuk perubahan, retry/duplikat, konflik dan badge; `node scripts/workflow-test.mjs` untuk binding/eksekusi Workflow native. Aktivasi produksi harus memverifikasi hasil satu instance awal dan Cron sebelum dinyatakan aktif.
 
 Halaman lanjutan dan RSS DramaQu tidak dipakai dalam jadwal karena telah menolak akses Cloudflare dengan 403. Mode diagnostik dan pengulangan paksa hanya tersedia lewat API Workflow Cloudflare yang terautentikasi, bukan endpoint web publik. Setelah upload Worker lewat API, perbarui definisi Workflow dan tunggu versi barunya siap sebelum memulai instance; propagasi versi berlangsung asinkron.
+
+## Pemutar ZerosDrama
+
+Video langsung menggunakan Plyr 3.8.5 dengan aset lokal `/assets/plyr/3.8.5/` (JS, CSS, ikon). `npm run prepare:player` membuat `player-assets.js` dari versi npm yang dipatok. Aset baru dimuat pada pemutaran video langsung pertama; jika gagal, kontrol HTML5 tetap aktif. Plyr saat ini menerima pembaruan keamanan saja menurut metadata npm. Kontrol iframe penyedia tetap mengikuti penyedia.
+
+Kontrol mencakup seek ±10 detik, kecepatan 0,5–2×, suara, fullscreen dan PiP bila didukung. Episode sebelumnya/berikutnya selalu manual. Checkpoint, riwayat lokal, dan penghitung pemutaran aktif tetap memakai elemen video asli. `stopPlayer()` menyimpan progres sebelum pause/destroy. Preferensi volume/kecepatan dikelola Plyr pada key lokal tersendiri.
+
+Uji browser: buat video sintetis `/tmp/zerosdrama-player-test.mp4` dengan ffmpeg (testsrc2, 90 detik, H.264/AAC), lalu `node scripts/player-browser-test.mjs`. Test memakai Chromium sistem dan fixture API/media lokal, mencakup desktop 1366 px serta mobile 390/320 px, resume, seek, kecepatan, navigasi, iframe, cleanup dan kegagalan aset. Pengujian ini bukan bukti keberhasilan stream sumber produksi. Uji unit regresi: progress-test, popunder-test, catalog-test, genres-test, featured-test dan metadata-test dalam `scripts/`.

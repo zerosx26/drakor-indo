@@ -21,6 +21,14 @@
   },
   "routes": [
     {
+      "pattern": "zerosdrama.com",
+      "custom_domain": true
+    },
+    {
+      "pattern": "www.zerosdrama.com",
+      "custom_domain": true
+    },
+    {
       "pattern": "drakor.zerosarcade.com",
       "custom_domain": true
     }
