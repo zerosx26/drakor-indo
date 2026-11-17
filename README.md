@@ -80,7 +80,7 @@ Halaman lanjutan dan RSS DramaQu tidak dipakai dalam jadwal karena telah menolak
 
 Video langsung menggunakan Plyr 3.8.5 dengan aset lokal `/assets/plyr/3.8.5/` (JS, CSS, ikon). `npm run prepare:player` membuat `player-assets.js` dari versi npm yang dipatok. Aset baru dimuat pada pemutaran video langsung pertama; jika gagal, kontrol HTML5 tetap aktif. Plyr saat ini menerima pembaruan keamanan saja menurut metadata npm. Kontrol iframe penyedia tetap mengikuti penyedia.
 
-Kontrol mencakup seek ±10 detik, kecepatan 0,5–2×, suara, fullscreen dan PiP bila didukung. Episode sebelumnya/berikutnya selalu manual. Checkpoint, riwayat lokal, dan penghitung pemutaran aktif tetap memakai elemen video asli. `stopPlayer()` menyimpan progres sebelum pause/destroy. Preferensi volume/kecepatan dikelola Plyr pada key lokal tersendiri.
+Kontrol mencakup seek ±10 detik, kecepatan 0,5–2×, suara, fullscreen dan PiP bila didukung. Episode sebelumnya/berikutnya selalu manual. Checkpoint, riwayat lokal, tetap memakai elemen video asli. `stopPlayer()` menyimpan progres sebelum pause/destroy. Preferensi volume/kecepatan dikelola Plyr pada key lokal tersendiri.
 
 Uji browser: buat video sintetis `/tmp/zerosdrama-player-test.mp4` dengan ffmpeg (testsrc2, 90 detik, H.264/AAC), lalu `node scripts/player-browser-test.mjs`. Test memakai Chromium sistem dan fixture API/media lokal, mencakup desktop 1366 px serta mobile 390/320 px, resume, seek, kecepatan, navigasi, iframe, cleanup dan kegagalan aset. Pengujian ini bukan bukti keberhasilan stream sumber produksi. Uji unit regresi: progress-test, popunder-test, catalog-test, genres-test, featured-test dan metadata-test dalam `scripts/`.
 
@@ -95,3 +95,7 @@ Tugas utama tetap 07.00 Asia/Jakarta dan memakai konektor Cloudflare tanpa keter
 Pemeriksaan cadangan berjalan 07.15 Asia/Jakarta sejak 18 November 2026. Cek riwayat tugas utama dan attempt KV; kirim pengganti hanya bila kegagalan terkonfirmasi dan tidak ada run berjalan/hasil siap. Jika status unknown, simpan skipped_unknown dan jangan mengirim ulang. Pengiriman tepat sekali tidak dapat dijamin saat platform tidak menyediakan tanda terima. Laporan manual 17 November dipulihkan beserta baseline; tidak ada pemindaian ulang atau perubahan katalog saat pemulihan.
 
 Uji `node scripts/sync-test.mjs` dan `node scripts/workflow-test.mjs` mencakup laporan terperinci, pengulangan, penggabungan harian, hitungan kosong, pemulihan laporan hilang dan kegagalan publikasi. Layanan automation tetap memerlukan verifikasi run terjadwal berikutnya; keberhasilan penyimpanan KV tidak dianggap bukti pesan diterima.
+
+## Iklan aktif
+
+Popunder dinonaktifkan: tag aarems.org dan penghitung ambang lima menit telah dihapus. Social Bar tetap satu pemuat, dimulai tiga detik setelah DOM siap dan ditunda saat dialog terbuka; tidak terkait durasi menonton. Native Banner dipertahankan. `node scripts/popunder-test.mjs` kini memeriksa bahwa Popunder tidak tersedia dan Social Bar dimuat satu kali tanpa mengganggu checkpoint.
