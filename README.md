@@ -98,4 +98,8 @@ Uji `node scripts/sync-test.mjs` dan `node scripts/workflow-test.mjs` mencakup l
 
 ## Iklan aktif
 
-Popunder dinonaktifkan: tag aarems.org dan penghitung ambang lima menit telah dihapus. Social Bar tetap satu pemuat, dimulai tiga detik setelah DOM siap dan ditunda saat dialog terbuka; tidak terkait durasi menonton. Native Banner dipertahankan. `node scripts/popunder-test.mjs` kini memeriksa bahwa Popunder tidak tersedia dan Social Bar dimuat satu kali tanpa mengganggu checkpoint.
+Popunder dinonaktifkan: tag aarems.org dan penghitung ambang lima menit telah dihapus. Social Bar tetap satu pemuat, dimulai tiga detik setelah DOM siap termasuk saat dialog terbuka; tidak terkait durasi menonton. Native Banner dipertahankan. `node scripts/popunder-test.mjs` kini memeriksa bahwa Popunder tidak tersedia dan Social Bar dimuat satu kali tanpa mengganggu checkpoint.
+
+## Social Bar pada detail drama
+
+Detail memakai `dialog.show()` dengan backdrop biasa (z-index 19/20), bukan top layer `showModal()`. Social Bar dimuat sekali tiga detik setelah DOM siap walau detail terbuka. Konten aplikasi di belakang dialog inert; iklan yang ditambahkan ke body tetap dapat berinteraksi. Scroll dan fokus dipulihkan saat menutup, termasuk tombol ×, Kembali ke katalog, Esc dan Back browser. Esc tidak menutup detail selama fullscreen video aktif. Frequency/fill dan posisi kreatif tetap dikendalikan Adsterra. Test browser memakai overlay iklan fixture; ini bukan bukti penayangan materi iklan asli.
